@@ -1489,6 +1489,11 @@ void handle_connection (int fd)
                         establish_http_connection (connptr, request);
         }
 
+        set_readtimeout(connptr->client_fd, config.idletimeout);
+        set_readtimeout(connptr->server_fd, config.idletimeout);
+        set_writetimeout(connptr->client_fd, config.idletimeout);
+        set_writetimeout(connptr->server_fd, config.idletimeout);
+
         if (process_client_headers (connptr, hashofheaders) < 0) {
                 update_stats (STAT_BADCONN);
                 goto fail;
