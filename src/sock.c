@@ -163,6 +163,34 @@ int socket_blocking (int sock)
 }
 
 /*
+ * set the socket 's read timeout -hanbaga
+ */
+int set_readtimeout(int sock, int timeout)
+{
+        assert (sock >= 0);
+
+        struct timeval tv;
+        tv.tv_sec  = timeout;
+        tv.tv_usec = 0;
+
+        return setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (const char*)&tv, sizeof(struct timeval));
+}
+
+/*
+ * set the socket 's write timeout -hanbaga
+ */
+int set_writetimeout(int sock, int timeout)
+{
+        assert (sock >= 0);
+
+        struct timeval tv;
+        tv.tv_sec  = timeout;
+        tv.tv_usec = 0;
+        
+        return setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(struct timeval));
+}
+
+/*
  * Start listening to a socket. Create a socket with the selected port.
  * The size of the socket address will be returned to the caller through
  * the pointer, while the socket is returned as a default return.

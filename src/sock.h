@@ -31,6 +31,9 @@
 extern int opensock (const char *host, int port, const char *bind_to);
 extern int listen_sock (uint16_t port, socklen_t * addrlen);
 
+extern int set_readtimeout(int sock, int timeout);
+extern int set_writetimeout(int sock, int timeout);
+
 extern int socket_nonblocking (int sock);
 extern int socket_blocking (int sock);
 
