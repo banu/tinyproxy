@@ -168,7 +168,12 @@ int socket_blocking (int sock)
 int set_readtimeout(int sock, int timeout)
 {
         assert (sock >= 0);
-        return setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (const char*)&timeout, sizeof(int));
+
+        struct timeval tv;
+        tv.tv_sec  = timeout;
+        tv.tv_usec = 0;
+
+        return setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (const char*)&tv, sizeof(struct timeval));
 }
 
 /*
@@ -177,7 +182,12 @@ int set_readtimeout(int sock, int timeout)
 int set_writetimeout(int sock, int timeout)
 {
         assert (sock >= 0);
-        return setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (const char*)&timeout, sizeof(int));
+
+        struct timeval tv;
+        tv.tv_sec  = timeout;
+        tv.tv_usec = 0;
+        
+        return setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(struct timeval));
 }
 
 /*
