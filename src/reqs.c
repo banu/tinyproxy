@@ -1488,6 +1488,8 @@ void handle_connection (int fd)
                              "file descriptor %d.", request->host,
                              connptr->server_fd);
 
+                update_reqpeer(request->host);
+
                 if (!connptr->connect_method)
                         establish_http_connection (connptr, request);
         }
