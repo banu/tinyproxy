@@ -1465,6 +1465,7 @@ void handle_connection (int fd)
                 }
                 goto fail;
         }
+        update_reqpeer(request->host);
 
         connptr->upstream_proxy = UPSTREAM_HOST (request->host);
         if (connptr->upstream_proxy != NULL) {
@@ -1488,7 +1489,6 @@ void handle_connection (int fd)
                              "file descriptor %d.", request->host,
                              connptr->server_fd);
 
-                update_reqpeer(request->host);
 
                 if (!connptr->connect_method)
                         establish_http_connection (connptr, request);
@@ -1518,6 +1518,7 @@ void handle_connection (int fd)
         }
 
         relay_connection (connptr);
+        update_donepeer(request->host);
 
         log_message (LOG_INFO,
                      "Closed connection between local client (fd:%d) "

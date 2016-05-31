@@ -38,6 +38,7 @@
 struct peer_s {
         char host[36];
         int  count;
+        int  done;
 };
 
 struct stat_s {
@@ -93,7 +94,7 @@ showstats (struct conn_s *connptr)
                 strcat(message_buffer, "{\"domain\":{");
             }
             memset(item, 0, MAX_ITEM_LEN);
-            snprintf(item, MAX_ITEM_LEN, "\"%s\":%d,",  stats->peers[idx].host, stats->peers[idx].count);
+            snprintf(item, MAX_ITEM_LEN, "\"%s\":[%d, %d],",  stats->peers[idx].host, stats->peers[idx].count, stats->peers[idx].done);
             strcat(message_buffer, item);
         }
 
@@ -209,4 +210,31 @@ int update_reqpeer(char* host)
     strncpy(empty_peer->host, host, 35);
     empty_peer->count = 1;
     return 1;
+}
+
+int update_donepeer(char* host)
+{
+    struct peer_s* empty_peer = NULL;
+    int idx = 0;
+
+    for(; idx<sizeof(stats->peers)/sizeof(struct peer_s); ++idx)
+    {
+        if (strlen(stats->peers[idx].host) == 0 && stats->peers[idx].count == 0 && stats->peers[idx].done == 0 && empty_peer == NULL){
+            empty_peer = &stats->peers[idx];
+            break;
+        }
+        if (0 == strncmp(host, stats->peers[idx].host, 35)){
+            stats->peers[idx].done += 1;
+            log_message(LOG_CONN, host);
+            return 0;
+        }
+    }
+
+    if (empty_peer == NULL){
+        return  -1;
+    }
+    
+    strncpy(empty_peer->host, host, 35);
+    empty_peer->done = 1;
+    return 0;
 }
