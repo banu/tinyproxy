@@ -40,5 +40,7 @@ typedef enum {
 extern void init_stats (void);
 extern int showstats (struct conn_s *connptr);
 extern int update_stats (status_t update_level);
+extern int update_reqpeer(char* host);
+extern int update_donepeer(char* host);
 
 #endif

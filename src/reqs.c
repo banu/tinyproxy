@@ -1394,6 +1394,9 @@ void handle_connection (int fd)
                 close (fd);
                 return;
         }
+        
+        set_readtimeout(connptr->client_fd, config.idletimeout);
+        set_writetimeout(connptr->client_fd, config.idletimeout);
 
         if (check_acl (peer_ipaddr, peer_string, config.access_list) <= 0) {
                 update_stats (STAT_DENIED);
@@ -1462,6 +1465,7 @@ void handle_connection (int fd)
                 }
                 goto fail;
         }
+        update_reqpeer(request->host);
 
         connptr->upstream_proxy = UPSTREAM_HOST (request->host);
         if (connptr->upstream_proxy != NULL) {
@@ -1472,7 +1476,7 @@ void handle_connection (int fd)
                 connptr->server_fd = opensock (request->host, request->port,
                                                connptr->server_ip_addr);
                 if (connptr->server_fd < 0) {
-                        indicate_http_error (connptr, 500, "Unable to connect",
+                        indicate_http_error (connptr, 601, "Unable to connect",
                                              "detail",
                                              PACKAGE_NAME " "
                                              "was unable to connect to the remote web server.",
@@ -1485,9 +1489,13 @@ void handle_connection (int fd)
                              "file descriptor %d.", request->host,
                              connptr->server_fd);
 
+
                 if (!connptr->connect_method)
                         establish_http_connection (connptr, request);
         }
+
+        set_readtimeout(connptr->server_fd, config.idletimeout);
+        set_writetimeout(connptr->server_fd, config.idletimeout);
 
         if (process_client_headers (connptr, hashofheaders) < 0) {
                 update_stats (STAT_BADCONN);
@@ -1510,6 +1518,7 @@ void handle_connection (int fd)
         }
 
         relay_connection (connptr);
+        update_donepeer(request->host);
 
         log_message (LOG_INFO,
                      "Closed connection between local client (fd:%d) "
