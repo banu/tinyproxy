@@ -1476,7 +1476,7 @@ void handle_connection (int fd)
                 connptr->server_fd = opensock (request->host, request->port,
                                                connptr->server_ip_addr);
                 if (connptr->server_fd < 0) {
-                        indicate_http_error (connptr, 500, "Unable to connect",
+                        indicate_http_error (connptr, 601, "Unable to connect",
                                              "detail",
                                              PACKAGE_NAME " "
                                              "was unable to connect to the remote web server.",
